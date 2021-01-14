@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 定义：一个构造函数一生只有一个实例
+    // 应用：自定义弹出层
+    function Person() {
+      this.name = 'jack'
+    }
+    const p1 = new Person();
+    const p2 = new Person();
+    console.log(p1, p2);// 输出两个一样的实例
+    console.log(p1 == p2)// 输出false，要实现输出为tru就实现单例模式。
+
+    // 核心代码
+    let instance = null;
+    function singleton() {
+      if (!instance) instance = new Person();
+      return instance
+    }
+    const p3 = singleton();
+    const p4 = singleton();
+    console.log(p3 == p4)// 输出为true
+
+
+    // 核心代码改造，目的是实现真实使用的情况
+    const singleton2 = (function () {
+      function Person2() {
+        this.name = 'jack'
+      }
+      Person2.prototype.sayHi= function(){console.log('你好')}
+      let instance2 = null;
+      return function () {
+        if (!instance2) instance2 = new Person2();
+        return instance2
+      }
+    })()
+    const p5 = singleton2();
+    const p6 = singleton2();
+    console.log(p5 == p6)// 输出为true
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 
+      发布订阅：
+      说明：有一个对象，有人一直看着它，当这个对象状态发生变化的时候，第三方通知这个看着的人，触发技能
+      例子：买书，去书店买书，问，没有，留一个联系方式，回家。一旦有了书，就会接到电话，触发技能去买书。
+      实现：只需要一个构造函数，创建一个第三方店员的身份。
+    */
+
+    class Observer {
+      constructor() {
+        this.message = {}
+      }
+      on(type, fn) {
+        // type:拜托你看着的行为
+        // fn:当行为发生当时候触发的事情
+        // 应该把记录到消息队列message里面
+        // 判断消息队列里面是否存在该行为，如果有，就push，没有就直接新增
+        if (!this.message[type]) {
+          this.message[type] = []
+        }
+        this.message[type].push(fn)
+      }
+      off(type, fn) {
+        // 删除
+        if (!fn) {
+          // 删除所有这个行为
+          delete this.message[type]
+        } else {
+          // 删除这个行李里面的fn
+          if (!this.message[type]) return;// 先判断是否订阅过这个行为
+          this.message[type] = this.message[type].filter(item => fn !== item)
+        }
+      }
+      trigger(type) {
+        // 触发
+        if (!this.message[type]) return;// 先判断是否订阅过这个行为
+        this.message[type].forEach(item => {
+           item();
+        })
+      }
+    }
+
+    const person1 = new Observer();
+    function handlerA() { console.log('给我打电话') }
+    function handlerB() { console.log('不接，给我发邮件') }
+    function handlerC() { console.log('给我打电话说时间简史到了') }
+
+    // 当你拜托这个person1，帮你观察一些内容的时候，你得告诉它，当行为出现的时候，告诉你干什么。
+    person1.on('abc', handlerA)
+    person1.on('abc', handlerB)
+    person1.on('时间简史', handlerC)
+
+    // person1.off('abc')//直接删除这个行为的所有方法
+    // person1.off('abc', handlerA)// 删除这个行为里面的某一个方法
+    console.log(person1)
+
+    person1.trigger('abc');// 触发某一个行为
+  </script>
+</body>
+
+</html>

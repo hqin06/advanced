@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 
+      特殊说明：观察者模式 和 发布订阅 是不是两个设计模式？目前市场上，有一部分人认为是一个，有一部分人认为是两个。以下按照两个来记录
+
+      观察者模式：
+      说明：监控一个对象的状态，一旦状态发生改变，马上触发技能。
+      例子：监控学生的状态，拿出手机就触发班主任叫家长
+      实现：需要两个构造函数，一个是观察者，一个是被观察者
+      ==>创建被观察者
+
+      ==>创建观察者
+
+      发布-订阅模式：
+    */
+
+    //观察者构造函数
+    class Observer {
+      constructor(name, fn = () => { }) {
+        this.name = 'jack'
+        this.fn = fn
+      }
+    }
+
+    // 创建两个观察者
+    const bzr = new Observer('班主任', (state) => { console.log('因为' + state + '，把你家长找来') })
+    const xz = new Observer('校长', (state) => { console.log('因为' + state + '，骂你的班主任') })
+    const njzr = new Observer('年级主任', (state) => { console.log('因为' + state + '，问你哪个班的') })
+
+
+    // 被观察者的构造函数
+    class Subjeck {
+      constructor(state) {
+        this.state = state;
+        // 数组用来保存观察着我的人
+        this.observers = []
+      }
+
+      // 设置自己的状态
+      setState(val) {
+        this.state = val;//状态变了，触发观察者技能
+        // 遍历this.observers,依次触发技能，也可以写成改变成什么样的状态，对应触发什么样的技能
+        this.observers.forEach(item => {
+          item.fn(this.state);// 告诉它改变成了什么状态,触发观察者技能
+        })
+      }
+      // 添加观察者
+      addObserver(obs) {
+        // 谁是观察者，就传谁进来，判断一个存在就不加了
+        const res = this.observers.some(item => item == obs)
+        if (!res) this.observers.push(obs)
+      }
+      removeObserver(obs) {
+        // 删除观察者
+        this.observers = this.observers.filter(item => item !== obs)
+      }
+    }
+
+    // 创建一个被观察者
+    const jack = new Subjeck('学习');
+
+    // 给jack加一个观察者
+    jack.addObserver(bzr);
+    jack.addObserver(xz);
+    jack.addObserver(njzr);
+    // 改变状态
+    jack.setState('玩游戏')
+    console.log(jack)
+  </script>
+</body>
+
+</html>
