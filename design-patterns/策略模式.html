@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 
+    策略模式：
+    说明：策略模式的本意是将算法的使用与算法的实现分离开来，避免多重判断调用哪些算法。适用于有多个判断分支的场景，如解决表单验证问题。
+         一个问题可以匹配多个解决方案，不一定要用哪一个。而且有可能随时还会继续增加多个方案
+    例子：购物车结算
+    =>我们有好多种结算方式
+    =>满100减10
+    =>满200减25
+    =>8折
+    =>7折
+    */
+
+    // 1、暂时用闭包的方式把折扣方案保存下来
+    // 2、留下添加折扣和删除折扣的接口
+    const calcPrice = (function () {
+      const sale = {
+        '100_10': function (price) { return price -= 10 },
+        '200_25': function (price) { return price -= 25 },
+        '80%': function (price) { return price *= 0.8 }
+      }
+      function calcPrice(price, type) {
+        if (!sale[type]) return '没有这个折扣';
+        const result = sale[type](price);
+        return result;
+      }
+      calcPrice.add = function (type, fn) {
+        if (sale[type]) {
+          return '该折扣已经存在，请确定是否确定更改'
+        } else {
+          sale[type] = fn;
+          return '添加成功'
+        }
+      }
+      calcPrice.del = function (type) {
+        delete sale[type]
+        console.log(sale)
+      }
+      return calcPrice;
+    })();
+    calcPrice.add('70%', function (price) { return price *= 0.7 })
+    const res = calcPrice(120, '100_10');
+    calcPrice.del('200_25')
+    console.log(res, 'res')
+
+
+    
+  </script>
+</body>
+
+</html>
