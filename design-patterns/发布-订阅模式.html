@@ -43,9 +43,9 @@
       }
       trigger(type) {
         // 触发
-        if (!this.message[type]) return;// 先判断是否订阅过这个行为
+        if (!this.message[type] || this.message[type]?.length == 0) return;// 先判断是否订阅过这个行为,还要判断这个行为是否有方法
         this.message[type].forEach(item => {
-           item();
+          item();
         })
       }
     }
@@ -65,6 +65,79 @@
     console.log(person1)
 
     person1.trigger('abc');// 触发某一个行为
+
+
+
+    // 项目中遇到的实例：
+    // 说明：使用signalR实时通信监听一些客户端的在线情况，当退出系统的时候，关闭连接。
+    // 比如：一个地磅客户端，在筑平安的管理系统里面监听，是否在线是服务端直接推送的，但是当用户退出的时候，就需要关闭这个通信。
+    // 连接signalR是在某一个功能页的componentDidMount里面的，但是退出又是在另外一个功能页面。所有这时候就可以用这个发布-订阅模式
+    // 语法：react umi antd
+    // 这里只列出主要代码：
+    // application.js 监听页面
+    // import emit from './_emit';
+    // setMessage() {
+    //     let SRServer = _RestTools.ServerApiUrl + '/zpa/clientMonitor'; //服务器地址
+    //     let connection = new signalR.HubConnectionBuilder()
+    //         .withUrl(SRServer, { accessTokenFactory: () => { return (localStorage.getItem(_Const.tokenName)) } })
+    //         .withAutomaticReconnect()
+    //         .build();
+    //     connection.start()
+    //         .then(
+    //             ()=>{
+    //                 console.log('服务已经连接...');
+    //                 emit.subscribe('closeSocket',()=>{
+    //                     connection.stop();
+    //                     console.log('服务已关闭');
+    //                 })
+    //             }
+    //         );
+    //     connection.on("ReceiveMessage", data => {
+    //         console.log(data);
+    //         _UITools.showMessage(data, 6)
+    //     });
+    // }
+
+    // logout.js 退出页面/实现关闭连接的需求
+    // import emit from './_emit';
+    // logout(item) {
+    //   localStorage.clear();
+    //   emit.publish('closeSocket');
+    //   hashHistory.push('/Login');
+    // },
+
+    // _emit.js 发布-订阅的构造函数
+    // class SubPub {
+    //   constructor() {
+    //     this.list = {}// 订阅时间列表
+    //   }
+    //   // 订阅
+    //   subscribe(type, fun) {
+    //     if (!this.list[type]) this.list[type] = []
+    //     this.list[type] = this.list[type].push(fun)
+    //   }
+    //   // 发布
+    //   publish(type,...arg) {
+    //     if (!this.list[type] || this.list[type]?.length == 0) return false;
+    //     this.list[type].forEach(fun=>{
+    //       fun(...arg);
+    //     })
+    //   }
+    //   // 删除
+    //   remove(type,fun) {
+    //     if (!fun) {
+    //       // 删除所有这个行为
+    //       delete this.list[type]
+    //     } else {
+    //       // 删除这个行李里面的fn
+    //       if (!this.list[type]) return;// 先判断是否订阅过这个行为
+    //       this.list[type] = this.list[type].filter(item => fun !== item)
+    //     }
+    //   }
+    // }
+    // let _emit = new SubPub();
+    // export _emit;
+
   </script>
 </body>
 

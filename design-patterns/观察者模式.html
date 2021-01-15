@@ -50,6 +50,7 @@
         this.state = val;//状态变了，触发观察者技能
         // 遍历this.observers,依次触发技能，也可以写成改变成什么样的状态，对应触发什么样的技能
         this.observers.forEach(item => {
+          console.log(item,'fff')
           item.fn(this.state);// 告诉它改变成了什么状态,触发观察者技能
         })
       }
